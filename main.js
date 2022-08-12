@@ -41,6 +41,9 @@ function renderTasks(tasks, input, list_element) {
 };
 
 function renderTask(task, input, list_element){
+    const tasks = loadTasks();
+
+
     const task_element = document.createElement("div");
     task_element.classList.add("tasks");
 
@@ -81,7 +84,9 @@ function renderTask(task, input, list_element){
        if (task_edit_button.innerHTML.toLowerCase() == "edit"){
         task_input_element.removeAttribute("readonly");
         task_input_element.focus();
+ 
         task_edit_button.innerHTML = "Save";
+
        } else {
         task_input_element.setAttribute("readonly", "readonly");
         task_edit_button.innerHTML = "Edit"
@@ -90,5 +95,7 @@ function renderTask(task, input, list_element){
 
     task_delete_button.addEventListener("click", () => {
        list_element.removeChild(task_element);
+       tasks.splice(tasks.indexOf(task), 1)
+       localStorage.setItem("tasks", JSON.stringify(tasks))
     });
 };
