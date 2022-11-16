@@ -16,6 +16,12 @@ function loadTasks() {
 function App() {
   const [newTask, setNewTask] = useState("");
   const [tasks, setTasks] = useState(loadTasks());
+  const [editing, setEditing] = useState([]);
+
+  const editTaskById = (id) => {
+    const next = [...editing, id];
+    setEditing(next);
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -44,6 +50,10 @@ function App() {
     setTasks(next);
 
     localStorage.setItem("tasks", JSON.stringify(next));
+
+    setEditing(
+      editing.filter((x) => x !== id).map((x) => (id < x ? x - 1 : x))
+    );
   };
 
   return (
@@ -64,14 +74,30 @@ function App() {
         </form>
         <section className="task-list">
           <h2>Tasks</h2>
+          <pre>{JSON.stringify({ tasks, editing }, null, 2)}</pre>
           <div id="tasks">
             {tasks.map((task, id) => (
               <div className="tasks">
                 <div className="content">
-                  <input type="text" className="text" value={task} readOnly />
+                  <input
+                    type="text"
+                    className="text"
+                    value={task}
+                    readOnly={!editing.includes(id)}
+                  />
                 </div>
                 <div className="actions">
-                  <button className="edit">Edit</button>
+                  {editing.includes(id) ? (
+                    <button className="edit">Save</button>
+                  ) : (
+                    <button
+                      className="edit"
+                      onClick={(_event) => editTaskById(id)}
+                    >
+                      Edit
+                    </button>
+                  )}
+
                   <button
                     className="delete"
                     onClick={(_event) => deleteTaskById(id)}
